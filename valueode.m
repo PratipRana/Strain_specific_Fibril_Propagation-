@@ -1,4 +1,5 @@
-function valueode;
+function valueode
+
 % estimate error of one run
 % n=10;
 % x=0.3e-2;
@@ -8,18 +9,21 @@ function valueode;
 
 
 n=6;
-x=18e-4;
+x=6.1e-4;
 y =5e-6;
-z=10e3;
+z=20e3;
 zz=5e1;
 p=1e5;
 q= 5e1; 
-prob=90e-6
+prob=150e-6;
 
 
 
 A_1=0.50;
-F_12=0.1;
+FF_12=[0.1 0.01 0.001];
+
+for jj=1:3
+    F_12=FF_12(jj);
 
 Y0=zeros(1,n); 
 Y0(1)=F_12;
@@ -46,7 +50,7 @@ signal2=signal;
 signal2 = (signal2 - min(signal2))/(max(signal2) - min(signal2));
 signal2(signal2<0)=0;
 hold on
-plot(t_range,signal2)
+% plot(t_range,signal2)
 
 signal1=Y_val(:,n)*0;
  for i=2:n-1
@@ -58,7 +62,7 @@ signal3=signal1;
 signal3 = (signal3 - min(signal3))/(max(signal3) - min(signal3));
 signal3(signal3<0)=0;
 hold on
-plot(t_range,signal3)
+% plot(t_range,signal3)
  
 signal=signal+signal1;
 signal = (signal - min(signal))/(max(signal) - min(signal));
@@ -66,26 +70,48 @@ signal(signal<0)=0;
 hold on
 plot(t_range,signal)
 
-A = [t_range', signal];
-fileID = fopen('N_6_2_data.txt','w');
-fprintf(fileID,'%6s %12s\n','Time','Signal');
-fprintf(fileID,'%6.2f %12.8f\n',A');
-fclose(fileID);
-hold on
+if (jj==1)
+     load 'LFAO_DATA.txt';
+    Data=LFAO_DATA;
+    plot(Data(:,1),Data(:,2),'-*')
+    hold on
+elseif (jj==2)
+    load 'LFAO_DATA_01.txt';
+    Data=LFAO_DATA_01;
+    plot(Data(:,1),Data(:,2),'-*')
+    hold on
+ else
+    load 'LFAO_DATA_00001.txt';
+    Data=LFAO_DATA_00001;
+    plot(Data(:,1),Data(:,2),'-*')
+    hold on
+ end
 
-X=[0
-0.07652
-0.11945
-0.19411
-0.24835
-0.55645
-1
-0.87959
-0.94942];
-Y=signal([1,24,48,96,144,168,192,216,336]);
-axis=[1,24,48,96,144,168,192,216,336];
-hold on
-plot(axis,X)
+X=Data(:,2);
+Y=signal(Data(:,1)+1);
 mdl = fitlm(Y,X)
+end
+
+% A = [t_range', signal];
+% fileID = fopen('N_6_2_data.txt','w');
+% fprintf(fileID,'%6s %12s\n','Time','Signal');
+% fprintf(fileID,'%6.2f %12.8f\n',A');
+% fclose(fileID);
+% hold on
+
+% X=[0
+% 0.07652
+% 0.11945
+% 0.19411
+% 0.24835
+% 0.55645
+% 1
+% 0.87959
+% 0.94942];
+% Y=signal([1,24,48,96,144,168,192,216,336]);
+% axis=[1,24,48,96,144,168,192,216,336];
+% hold on
+% plot(axis,X)
+% mdl = fitlm(Y,X)
                 
 
